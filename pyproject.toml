@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mhcprime"
+version = "0.1.0"
+description = "MHCPrime peptide-MHC class I prediction model"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "Prathamesh Chati"}
+]
+dependencies = [
+    "torch>=2.0",
+    "numpy>=1.23",
+    "pandas>=1.5",
+    "scikit-learn>=1.2",
+    "scipy>=1.9",
+    "tqdm>=4.64",
+    "transformers>=4.30",
+    "peptides"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+    "black",
+    "build",
+    "twine",
+    "ipykernel",
+    "jupyter"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+mhcprime = [
+    "data/*.txt",
+    "data/*.py",
+    "data/*.csv",
+    "data/*.csv.gz",
+    "data/*.json",
+    "data/*.npz",
+    "checkpoints/**/*.pt"
+]
+
+[project.scripts]
+mhcprime-predict = "mhcprime.cli:main"

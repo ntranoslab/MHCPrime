@@ -1,0 +1,26 @@
+Metadata-Version: 2.4
+Name: mhcprime
+Version: 0.1.0
+Summary: MHCPrime peptide-MHC class I prediction model
+Author: Prathamesh Chati
+License: MIT
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: torch>=2.0
+Requires-Dist: numpy>=1.23
+Requires-Dist: pandas>=1.5
+Requires-Dist: scikit-learn>=1.2
+Requires-Dist: scipy>=1.9
+Requires-Dist: tqdm>=4.64
+Requires-Dist: transformers>=4.30
+Requires-Dist: peptides
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
+Requires-Dist: ruff; extra == "dev"
+Requires-Dist: black; extra == "dev"
+Requires-Dist: build; extra == "dev"
+Requires-Dist: twine; extra == "dev"
+Requires-Dist: ipykernel; extra == "dev"
+Requires-Dist: jupyter; extra == "dev"
+Dynamic: license-file

@@ -1,0 +1,2 @@
+[console_scripts]
+mhcprime-predict = mhcprime.cli:main
