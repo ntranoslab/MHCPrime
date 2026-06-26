@@ -202,10 +202,21 @@ def map_allele_pseudosequences(
     Rows whose allele is absent from mhc_seq_dict are removed by default, with
     a user-facing warning. To use such alleles, users must add the allele key
     and 34-residue pseudosequence to the dictionary.
+
+    Behavior:
+        drop_missing=True, warn_missing=True:
+            warn and remove missing-MHC rows.
+
+        drop_missing=True, warn_missing=False:
+            silently remove missing-MHC rows.
+
+        drop_missing=False:
+            raise ValueError without warning.
     """
     df = df.copy()
 
     missing_mask = ~df[allele_col].astype(str).isin(mhc_seq_dict)
+
     if missing_mask.any():
         missing_alleles = sorted(df.loc[missing_mask, allele_col].astype(str).unique())
         n_missing_rows = int(missing_mask.sum())
@@ -217,13 +228,13 @@ def map_allele_pseudosequences(
             f"pseudosequence to the MHC pseudosequence dictionary."
         )
 
+        if not drop_missing:
+            raise ValueError(msg)
+
         if warn_missing:
             warnings.warn(msg, UserWarning)
 
-        if drop_missing:
-            df = df.loc[~missing_mask].copy()
-        else:
-            raise ValueError(msg)
+        df = df.loc[~missing_mask].copy()
 
     # initialize all expected columns
     df["mhc_a_1"] = None
@@ -236,7 +247,6 @@ def map_allele_pseudosequences(
         df.at[idx, mhc_col] = mhc_seq_dict[allele]
 
     return df
-
 
 def prepare_input_dataframe(
     df: pd.DataFrame,

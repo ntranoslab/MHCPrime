@@ -31,7 +31,8 @@ dev = [
     "build",
     "twine",
     "ipykernel",
-    "jupyter"
+    "jupyter",
+    "pytest>=8.0"
 ]
 
 [tool.setuptools.packages.find]

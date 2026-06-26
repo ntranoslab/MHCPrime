@@ -1,5 +1,6 @@
 # MHCPrime
 
+[![Tests](https://github.com/ntranoslab/MHCPrime/actions/workflows/tests.yml/badge.svg)](https://github.com/ntranoslab/MHCPrime/actions/workflows/tests.yml)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ntranoslab/MHCPrime/blob/main/notebooks/01_inference_quickstart.ipynb)
 
 MHCPrime is a transformer-based peptide-MHC class I prediction model. This package provides a pretrained default checkpoint, packaged MHC pseudosequences, example datasets, Python inference functions, and a command-line predictor.
