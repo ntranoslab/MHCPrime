@@ -1,6 +1,6 @@
 # MHCPrime
 
-[![Tests](https://github.com/ntranoslab/MHCPrime/actions/workflows/tests.yml/badge.svg)](https://github.com/ntranoslab/MHCPrime/actions/workflows/tests.yml)
+[![Tests](https://github.com/ntranoslab/MHCPrime/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/ntranoslab/MHCPrime/actions/workflows/tests.yml)
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ntranoslab/MHCPrime/blob/main/notebooks/01_inference_quickstart.ipynb)
 
