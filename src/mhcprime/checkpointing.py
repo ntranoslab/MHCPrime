@@ -118,7 +118,18 @@ def load_state_dict_flexible(
     map_location:
         Passed to torch.load(). Default is CPU for safe cross-device loading.
     """
-    checkpoint = torch.load(checkpoint_path, map_location=map_location)
+    # checkpoint = torch.load(checkpoint_path, map_location=map_location)
+    try:
+        checkpoint = torch.load(
+            checkpoint_path,
+            map_location=map_location,
+            weights_only=True,
+        )
+    except TypeError:
+        checkpoint = torch.load(
+            checkpoint_path,
+            map_location=map_location,
+        )
     state_dict = extract_model_state_dict(checkpoint)
     incompatible = model.load_state_dict(state_dict, strict=strict)
     return incompatible

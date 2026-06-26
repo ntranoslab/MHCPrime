@@ -7,3 +7,5 @@ __pycache__/
 *_cache.pt
 dataset_cache.pt
 .DS_Store
+*.egg-info/
+src/*.egg-info/

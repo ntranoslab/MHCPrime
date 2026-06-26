@@ -1,6 +1,7 @@
 import re
 from typing import Dict, Iterable, Optional, Tuple
 import pandas as pd
+import warnings
 
 from .data.mhc_pseudo_seqs import mhc_seq_dict as RAW_MHC_SEQ_DICT
 DEFAULT_ALLOWED_PEPTIDE_AA = set("ACDEFGHIKLMNPQRSTVWYUX")
@@ -113,6 +114,9 @@ def _validate_or_create_flanks(
 
     if c_flank_col not in df.columns:
         df[c_flank_col] = pad_char * flank_len
+
+    for col in (n_flank_col, c_flank_col):
+        df[col] = df[col].fillna("").astype(str)
 
     for col in (n_flank_col, c_flank_col):
         unpadded = df[col].astype(str).map(lambda x: _strip_padding(x, pad_char))

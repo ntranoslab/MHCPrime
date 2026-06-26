@@ -10,11 +10,10 @@ from torch import GradScaler, autocast
 from tqdm import tqdm
 from transformers import get_linear_schedule_with_warmup
 
-from .checkpointing import save_final_checkpoint
 from .losses import LogSmoothAPScore, SoftSpearmanLoss
 from .model_utils import PeptideMHCDataset, collate_fn
 from .samplers import make_simple_negative_loader
-
+from .checkpointing import save_final_checkpoint, _move_optimizer_state_to_device
 
 def compute_label_stats(all_labels, all_preds, threshold=0.0, print_stats=False):
     all_preds = np.array(all_preds)

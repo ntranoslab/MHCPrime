@@ -67,7 +67,7 @@ def make_simple_negative_loader(dataset, labels, batch_size, num_pos_per_epoch,
         num_workers=num_workers,
         collate_fn=collate_fn,
         pin_memory=True,
-        persistent_workers=persistent_workers
+        persistent_workers=persistent_workers and num_workers > 0,
     )
 
     return loader, sampler
