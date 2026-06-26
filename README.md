@@ -326,6 +326,10 @@ The packaged example datasets are intended for testing installation, inference, 
 
 For manuscript-scale benchmarking, users should evaluate on task-specific held-out datasets and background distributions appropriate to the biological application.
 
+## License
+
+This project is released under the MIT License. See the `LICENSE` file for details.
+
 ## Citation
 
 Citation here later.
