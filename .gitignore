@@ -1,3 +1,5 @@
+train_test_data/
+model_checkpoints/
 outputs/
 __pycache__/
 *.pyc

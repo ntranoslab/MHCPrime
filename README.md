@@ -1,5 +1,7 @@
 # MHCPrime
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ntranoslab/MHCPrime/blob/main/notebooks/01_inference_quickstart.ipynb)
+
 MHCPrime is a transformer-based peptide-MHC class I prediction model. This package provides a pretrained default checkpoint, packaged MHC pseudosequences, example datasets, Python inference functions, and a command-line predictor.
 
 ![MHCPrime architecture](assets/mhcprime_architecture.png)
@@ -62,7 +64,7 @@ mhcprime-predict src/mhcprime/data/ms_test_data_large.csv.gz \
 
 ## Input format
 
-The input file should be a CSV/CSV.GZ or TSV/TSV.GZ file with at least:
+The input file should be a csv/csv.gz or tsv/tsv.gz file with at least:
 
 ```text
 seq,allele
@@ -163,6 +165,8 @@ Then open the inference notebook in:
 notebooks/
 ```
 
+Model training is handled through the training script described below rather than through a notebook.
+
 ## Common CLI options
 
 Use slow dataframe-based inference instead of cached fast inference:
@@ -239,6 +243,82 @@ mhcprime-predict src/mhcprime/data/ms_test_data_small.csv.gz \
   --debug-env \
   --overwrite
 ```
+
+## Training
+
+Full MHCPrime training and test datasets are not stored directly in this GitHub repository because of file size. They can be downloaded from the [MHCPrime training/test data Google Drive folder](https://drive.google.com/drive/folders/1375azHSVJdbXN9qm6U_ht0mbhFbXDJBJ?usp=sharing).
+
+After downloading, place the training/test data under:
+
+```text
+train_test_data/
+```
+
+For base MHCPrime training, the default expected training file is:
+
+```text
+train_test_data/ms_train_data.csv.gz
+```
+
+The base model can then be trained with:
+
+```bash
+python scripts/train_mhcprime_base.py --gpu 0
+```
+
+or, equivalently, with an explicit device:
+
+```bash
+python scripts/train_mhcprime_base.py --device cuda:0
+```
+
+Training outputs are written to:
+
+```text
+model_checkpoints/
+```
+
+By default, the training script uses the same base-training settings used for the released model:
+
+```text
+n_epochs = 120
+batch_size = 3072
+num_pos_per_epoch = 200,000
+neg_pos_ratio = 1
+loss_type = logsmoothap
+loss_hp = 10.0
+encoder_lr = 2e-4
+decoder_lr = 2e-4
+optimizer_type = AdamW
+seed = 42
+```
+
+The default values can be changed from the command line. For example:
+
+```bash
+python scripts/train_mhcprime_base.py \
+  --train-data train_test_data/ms_train_data.csv.gz \
+  --run-name MHCPrime_Base \
+  --device cuda:0 \
+  --n-epochs 120 \
+  --batch-size 3072 \
+  --num-pos-per-epoch 200000 \
+  --neg-pos-ratio 1 \
+  --num-workers 16
+```
+
+To initialize training from an existing checkpoint rather than training from scratch:
+
+```bash
+python scripts/train_mhcprime_base.py \
+  --train-data train_test_data/ms_train_data.csv.gz \
+  --init-checkpoint src/mhcprime/checkpoints/mhcprime_base/model_final.pt \
+  --run-name MHCPrime_Continued \
+  --device cuda:0
+```
+
+This initializes model weights from the provided checkpoint and starts a new optimizer/scheduler run. It is not an exact optimizer-state resume.
+
 
 ## Notes
 
