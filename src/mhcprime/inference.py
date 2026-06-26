@@ -69,6 +69,35 @@ def _maybe_add_global_ranks(
         show_progress=not disable_tqdm,
     )
 
+def _cleanup_user_facing_output(scored_df, *, original_columns):
+    """
+    Clean user-facing inference output.
+
+    Behavior:
+    - Drop generated n_flank/c_flank columns only if they were not present
+      in the user's original input.
+    - Drop accidental saved-index columns such as Unnamed: 0.
+
+    Metadata columns supplied by the user are otherwise preserved.
+    """
+    out = scored_df.copy()
+    original_columns = set(original_columns)
+
+    drop_cols = []
+
+    if "n_flank" not in original_columns and "n_flank" in out.columns:
+        drop_cols.append("n_flank")
+
+    if "c_flank" not in original_columns and "c_flank" in out.columns:
+        drop_cols.append("c_flank")
+
+    if "Unnamed: 0" in out.columns:
+        drop_cols.append("Unnamed: 0")
+
+    if drop_cols:
+        out = out.drop(columns=drop_cols)
+
+    return out
 
 def run_mhcprime(
     model,
@@ -385,6 +414,7 @@ def predict_dataframe_slow(
     adds global percentile ranks, and returns a user-facing dataframe by default.
     """
     preprocess_kwargs = preprocess_kwargs or {}
+    original_columns = set(df.columns)
 
     if preprocess:
         processed_df = prepare_input_dataframe(df, **preprocess_kwargs)
@@ -416,6 +446,10 @@ def predict_dataframe_slow(
 
     if not return_processed:
         scored_df = unprocess_output_dataframe(scored_df)
+        scored_df = _cleanup_user_facing_output(
+            scored_df,
+            original_columns=original_columns,
+        )
 
     return scored_df
 
@@ -461,6 +495,7 @@ def predict_dataframe_fast(
     """
     preprocess_kwargs = preprocess_kwargs or {}
     cache_path = Path(cache_path)
+    original_columns = set(df.columns)
 
     if preprocess:
         processed_df = prepare_input_dataframe(df, **preprocess_kwargs)
@@ -511,6 +546,11 @@ def predict_dataframe_fast(
 
     if not return_processed:
         scored_df = unprocess_output_dataframe(scored_df)
+        scored_df = _cleanup_user_facing_output(
+            scored_df,
+            original_columns=original_columns,
+        )
+
 
     return scored_df
 
@@ -638,6 +678,7 @@ def predict_with_models(
     all model score columns.
     """
     preprocess_kwargs = preprocess_kwargs or {}
+    original_columns = set(df.columns)
 
     if preprocess:
         processed_df = prepare_input_dataframe(df, **preprocess_kwargs)
@@ -699,6 +740,10 @@ def predict_with_models(
 
         if not return_processed:
             out_df = unprocess_output_dataframe(out_df)
+            out_df = _cleanup_user_facing_output(
+                out_df,
+                original_columns=original_columns,
+            )
 
         return out_df
 
@@ -735,6 +780,10 @@ def predict_with_models(
 
         if not return_processed:
             out_df = unprocess_output_dataframe(out_df)
+            out_df = _cleanup_user_facing_output(
+                out_df,
+                original_columns=original_columns,
+            )
 
         return out_df
 

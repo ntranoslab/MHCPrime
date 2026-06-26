@@ -52,7 +52,11 @@ class FeatureProjectionEncoder(nn.Module):
         missing_aa = set()
         for token_idx, aa in tokenizer.idx2token.items():
             if aa in feature_table.index:
-                values = feature_table.loc[aa, self.feature_names].values
+                # values = feature_table.loc[aa, self.feature_names].values
+                values = feature_table.loc[aa, self.feature_names].to_numpy(
+                    dtype="float32",
+                    copy=True,
+                )
                 feature_matrix[token_idx] = torch.as_tensor(
                     values, dtype=torch.float32
                 )
