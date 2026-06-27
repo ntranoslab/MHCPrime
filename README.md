@@ -8,6 +8,13 @@ MHCPrime is a transformer-based peptide-MHC class I prediction model. This packa
 
 ## Installation
 
+We recommend installing MHCPrime in a clean Conda environment to avoid modifying packages in an existing Python environment.
+
+```bash
+conda create -n mhcprime_env python=3.9 -y
+conda activate mhcprime_env
+```
+
 Clone the repository and install in editable mode:
 
 ```bash
