@@ -25,14 +25,13 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest",
+    "pytest>=8.0",
     "ruff",
     "black",
     "build",
     "twine",
     "ipykernel",
     "jupyter",
-    "pytest>=8.0"
 ]
 
 [tool.setuptools.packages.find]
