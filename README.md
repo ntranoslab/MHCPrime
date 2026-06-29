@@ -27,6 +27,20 @@ MHCPrime uses PyTorch for model inference. The installation command above instal
 
 The default MHCPrime base checkpoint is included with the package and is loaded automatically. No separate checkpoint download is required for standard inference.
 
+## Hardware requirements
+
+MHCPrime can run on CPU for small examples and basic functionality checks. For larger datasets or high-throughput peptide-MHC scoring, a CUDA-capable GPU is recommended.
+
+Recommended hardware:
+
+* Small examples: CPU or any CUDA-capable GPU.
+* Larger packaged examples: CUDA GPU with at least 8 GB GPU memory recommended.
+* High-throughput inference: modern CUDA GPU with 16 GB or more GPU memory recommended.
+
+Fast cached inference uses bfloat16 mixed precision on CUDA devices by default for efficient scoring. Runtime depends on the available GPU, batch size, dataset size, and data loading performance.
+
+The Colab notebook is intended as a lightweight demonstration of installation, model loading, prediction, ranking, and basic post-scoring summaries. Free Colab GPU availability and GPU type may vary, so large benchmark-scale inference should be run on a local or server GPU when possible.
+
 ## Quick command-line prediction
 
 Run MHCPrime on the packaged small example dataset:
@@ -50,6 +64,8 @@ By default, `mhcprime-predict`:
 * adds an `mhcprime` score column,
 * adds an `mhcprime_rank` global percentile-rank column,
 * removes internal preprocessing columns from the output.
+
+On CUDA devices, fast cached inference uses bfloat16 mixed precision by default for efficient scoring.
 
 If the output file already exists, the command will ask before overwriting. To overwrite without prompting:
 
@@ -164,7 +180,7 @@ df = load_example_dataset("large_1_99")
 
 ## Inference notebook
 
-An example inference notebook is provided in the `notebooks/` directory. It demonstrates model loading, example dataset loading, fast and slow inference, score/rank inspection, and basic post-scoring summaries.
+An example inference notebook is provided in the `notebooks/` directory. It demonstrates model loading, example dataset loading, fast cached inference, score/rank inspection, and basic post-scoring summaries.
 
 Recommended workflow:
 
@@ -181,15 +197,6 @@ notebooks/
 Model training is handled through the training script described below rather than through a notebook.
 
 ## Common CLI options
-
-Use slow dataframe-based inference instead of cached fast inference:
-
-```bash
-mhcprime-predict src/mhcprime/data/ms_test_data_small.csv.gz \
-  --output outputs/ms_test_data_small_scored_slow.csv.gz \
-  --mode slow \
-  --overwrite
-```
 
 Disable percentile-rank calculation:
 
@@ -331,7 +338,6 @@ python scripts/train_mhcprime_base.py \
 ```
 
 This initializes model weights from the provided checkpoint and starts a new optimizer/scheduler run. It is not an exact optimizer-state resume.
-
 
 ## Notes
 
