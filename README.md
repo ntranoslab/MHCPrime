@@ -156,6 +156,12 @@ To load the larger packaged example dataset:
 df = load_example_dataset("large")
 ```
 
+To load the 1:99 positive to negative dataset:
+
+```python
+df = load_example_dataset("large_1_99")
+```
+
 ## Inference notebook
 
 An example inference notebook is provided in the `notebooks/` directory. It demonstrates model loading, example dataset loading, fast and slow inference, score/rank inspection, and basic post-scoring summaries.

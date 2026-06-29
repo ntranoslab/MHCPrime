@@ -8,9 +8,11 @@ def load_example_dataset(
     **read_csv_kwargs,
 ) -> pd.DataFrame:
     name = str(name).lower().strip()
+
     dataset_files = {
         "small": "ms_test_data_small.csv.gz",
         "large": "ms_test_data_large.csv.gz",
+        "large_1_99": "ms_test_data_1_99.csv.gz",
     }
 
     if name not in dataset_files:
