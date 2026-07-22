@@ -119,7 +119,7 @@ Peptides should be 8–14 amino acids. Optional flank columns can be provided as
 n_flank,c_flank
 ```
 
-If flank columns are absent, empty flanks are used. __Note: the model is trained without flanks. In order to use flanks, the most must be retrained with them.__
+If flank columns are absent, empty flanks are used. __Note: the model is trained without flanks. In order to use flanks, the model must be retrained with them.__
 
 ## Output format
 
