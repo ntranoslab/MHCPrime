@@ -181,7 +181,7 @@ def build_parser():
         "--label-col",
         type=str,
         default="label",
-        help="Input label column. If absent, label=0 is added. Default: label.",
+        help="Optional input ground-truth label column, preserved when supplied. Default: label.",
     )
 
     parser.add_argument(
@@ -362,6 +362,17 @@ def build_parser():
 
     # Ranking.
     parser.add_argument(
+        "--prediction-threshold",
+        type=float,
+        default=98.0,
+        help=(
+            "Percentile cutoff for binary predictions. "
+            "Default: 98, corresponding to the top 2% of background scores. "
+            "Requires percentile ranks."
+        ),
+    )
+
+    parser.add_argument(
         "--add-rank",
         dest="add_rank",
         action="store_true",
@@ -513,6 +524,7 @@ def predict_cli(args):
         "preprocess": args.preprocess,
         "preprocess_kwargs": preprocess_kwargs,
         "add_rank": args.add_rank,
+        "prediction_threshold": args.prediction_threshold,
         "rank_background_path": args.rank_background_path,
         "rank_suffix": args.rank_suffix,
         "rank_reverse": args.rank_reverse,
@@ -545,6 +557,7 @@ def predict_cli(args):
         print(f"Output shape: {scored_df.shape[0]:,} rows, {scored_df.shape[1]:,} columns")
 
     return scored_df
+
 
 def _print_runtime_info(*, device, debug_env=False):
     print(f"Using device: {device}")

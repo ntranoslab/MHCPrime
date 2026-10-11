@@ -554,7 +554,6 @@ def predict_dataframe_fast(
 
     return scored_df
 
-
 def predict_dataframe(
     model,
     df,
@@ -568,6 +567,7 @@ def predict_dataframe(
     preprocess: bool = True,
     preprocess_kwargs: Optional[dict] = None,
     add_rank: bool = True,
+    prediction_threshold: Optional[float] = 98.0,
     rank_background_scores=None,
     rank_background_path: Optional[Union[str, Path]] = None,
     rank_suffix: str = "_rank",
@@ -592,7 +592,7 @@ def predict_dataframe(
         if num_workers is None:
             num_workers = 8
 
-        return predict_dataframe_fast(
+        scored_df = predict_dataframe_fast(
             model,
             df,
             tokenizer,
@@ -613,13 +613,13 @@ def predict_dataframe(
             **kwargs,
         )
 
-    if mode in {"slow", "standard", "dataframe"}:
+    elif mode in {"slow", "standard", "dataframe"}:
         if batch_size is None:
             batch_size = 1024
         if num_workers is None:
             num_workers = 0
 
-        return predict_dataframe_slow(
+        scored_df = predict_dataframe_slow(
             model,
             df,
             tokenizer,
@@ -639,11 +639,33 @@ def predict_dataframe(
             return_processed=return_processed,
         )
 
-    raise ValueError(
-        f"Unknown inference mode '{mode}'. Expected one of "
-        "{'fast', 'cached', 'slow', 'standard', 'dataframe'}."
-    )
+    else:
+        raise ValueError(
+            f"Unknown inference mode '{mode}'. Expected one of "
+            "{'fast', 'cached', 'slow', 'standard', 'dataframe'}."
+        )
 
+    if add_rank and prediction_threshold is not None:
+        if not 0 <= prediction_threshold <= 100:
+            raise ValueError("prediction_threshold must be between 0 and 100.")
+
+        ranks = scored_df[f"{score_col}{rank_suffix}"]
+        if rank_reverse:
+            selected = ranks >= prediction_threshold
+        else:
+            selected = ranks <= 100 - prediction_threshold
+
+        scored_df[f"{score_col}_prediction"] = selected.astype("int8")
+
+    # Remove the internal dummy label from unlabeled user-facing output.
+    input_label_col = (
+        (preprocess_kwargs or {}).get("label_col", "label")
+        if preprocess else "label"
+    )
+    if not return_processed and input_label_col not in df.columns:
+        scored_df = scored_df.drop(columns=["label"], errors="ignore")
+
+    return scored_df
 
 def predict_with_models(
     models: Mapping[str, torch.nn.Module],
