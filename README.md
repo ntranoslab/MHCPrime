@@ -63,6 +63,7 @@ By default, `mhcprime-predict`:
 * runs fast cached inference,
 * adds an `mhcprime` score column,
 * adds an `mhcprime_rank` global percentile-rank column,
+* adds an `mhcprime_prediction` label column based on the default 98% threshold,
 * removes internal preprocessing columns from the output.
 
 On CUDA devices, fast cached inference uses bfloat16 mixed precision by default for efficient scoring.
@@ -131,9 +132,10 @@ allele
 label
 mhcprime
 mhcprime_rank
+mhcprime_prediction
 ```
 
-The `mhcprime` column contains the raw model score. The `mhcprime_rank` column contains the global percentile rank against the packaged MHCPrime background score distribution, where higher values indicate higher-ranking peptides.
+The `mhcprime` column contains the raw model score. The `mhcprime_rank` column contains the global percentile rank against the packaged MHCPrime background score distribution, where higher values indicate higher-ranking peptides. The `mhcprime_prediction` column provides predicted labels based on a traditional 2% threshold (given as 98.0 to the model).
 
 Internal model columns such as `mhc_a_1`, `mhc_b_1`, `mhc_c_1`, and `sa_ma` are removed by default.
 
@@ -161,6 +163,7 @@ scored_df = predict_dataframe(
     score_col="mhcprime",
     mode="fast",
     device=device,
+    prediction_threshold=98.0,
 )
 
 scored_df.head()
