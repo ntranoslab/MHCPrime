@@ -241,10 +241,12 @@ def map_allele_pseudosequences(
     df["mhc_b_1"] = None
     df["mhc_c_1"] = None
 
-    # route each allele to A/B/C columns, with non-A/B/C fallback to mhc_a_1
-    for idx, allele in df[allele_col].astype(str).items():
-        mhc_col = _mhc_column_for_allele(allele)
-        df.at[idx, mhc_col] = mhc_seq_dict[allele]
+    # Map each row independently, including when index labels are duplicated.
+    alleles = df[allele_col].astype(str)
+    pseudosequences = alleles.map(mhc_seq_dict).astype(object)
+    mhc_columns = alleles.map(_mhc_column_for_allele)
+    for mhc_col in ("mhc_a_1", "mhc_b_1", "mhc_c_1"):
+        df[mhc_col] = pseudosequences.where(mhc_columns.eq(mhc_col), None)
 
     return df
 
